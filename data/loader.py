@@ -207,6 +207,26 @@ class DataLoader(ABC):
             logger.info(msg.format(*args))
 
 
+class AdultData(DataLoader):
+    def __init__(self, path='data/clean_adult.csv', verbose=False, seed=1):
+        super().__init__(path, verbose, seed)
+
+    def _load_data(self):
+        self._data = pd.read_csv(self._path, header=0)
+
+    def data_name(self):
+        return 'AdultData'
+
+    def class_column_name(self):
+        return '57'
+
+    def _preprocess_data(self):
+        pass
+
+    def pre_training_adjustment(self, train_features, train_classes):
+        return train_features, train_classes
+
+
 class CreditDefaultData(DataLoader):
 
     def __init__(self, path='data/default of credit card clients.xls', verbose=False, seed=1):
