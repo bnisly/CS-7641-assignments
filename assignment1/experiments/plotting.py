@@ -6,6 +6,9 @@ import re
 import numpy as np
 import pandas as pd
 
+import matplotlib
+# Force matplotlib to not use any Xwindows backend.
+matplotlib.use('Agg')
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
