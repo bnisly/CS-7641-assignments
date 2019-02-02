@@ -14,13 +14,14 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+MAX_ITER=2000
 
 # Adapted from https://github.com/JonathanTay/CS-7641-assignment-1/blob/master/SVM.py
 class SVMLearner(learners.BaseLearner):
     def __init__(self, C=1.0, kernel='rbf', degree=3, gamma='auto',
                  coef0=0.0, shrinking=True, probability=False,
                  tol=1e-3, cache_size=200, class_weight=None,
-                 verbose=False, max_iter=-1, decision_function_shape='ovr',
+                 verbose=False, max_iter=MAX_ITER, decision_function_shape='ovr',
                  random_state=None):
         super().__init__(verbose)
         self._learner = svm.SVC(C=C,
@@ -46,7 +47,7 @@ class LinearSVMLearner(learners.BaseLearner):
     def __init__(self, C=1.0, loss='squared_hinge', dual=True, penalty='l2',
                  multi_class='ovr', intercept_scaling=1, fit_intercept=True,
                  tol=1e-3, class_weight=None,
-                 verbose=False, max_iter=-1, random_state=None):
+                 verbose=False, max_iter=MAX_ITER, random_state=None):
         super().__init__(verbose)
         self._learner = svm.LinearSVC(penalty=penalty,
                                       loss=loss,
@@ -73,7 +74,7 @@ class RBFSVMLearner(learners.BaseLearner):
                  alpha=1e-9,
                  l1_ratio=0,
                  fit_intercept=True,
-                 max_iter=None,
+                 max_iter=MAX_ITER,
                  tol=None,
                  shuffle=True,
                  verbose=False,
