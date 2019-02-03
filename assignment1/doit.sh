@@ -1,4 +1,7 @@
 #/bin/bash
+
+source ~/miniconda3/bin/activate ml
+
 set -x
 
 if [ "$1" == "" ]; then
