@@ -46,9 +46,9 @@ if __name__ == '__main__':
     print("----------")
 
     ds1_details = {
-            'data': loader.AdultData(verbose=verbose, seed=seed),
-            'name': 'clean_adult',
-            'readable_name': 'Adult',
+            'data': loader.CreditDefaultData(verbose=verbose, seed=seed),
+            'name': 'credit_default',
+            'readable_name': 'Credit Default',
         }
     ds2_details = {
             'data': loader.SpamData(verbose=verbose, seed=seed),
@@ -63,8 +63,7 @@ if __name__ == '__main__':
     timings = {}
 
     datasets = [
-        ds1_details,
-        ds2_details
+        ds1_details
     ]
 
     experiment_details = []
