@@ -56,8 +56,8 @@ class BoostingExperiment(experiments.BaseExperiment):
                                        seed=self._details.seed, threads=self._details.threads, verbose=self._verbose)
 
         # TODO: This should turn OFF regularization
-        experiments.perform_experiment(self._details.ds, self._details.ds_name, self._details.ds_readable_name,
-                                       of_booster, 'Boost_OF', 'Boost', of_params, seed=self._details.seed,
-                                       iteration_details=iteration_details,
-                                       best_params=best_params, threads=self._details.threads,
-                                       verbose=self._verbose, iteration_lc_only=True)
+        experiments.perform_experiment(self._details.ds, self._details.ds_name, self._details.ds_readable_name, of_booster,
+                                       'Boost_OF', 'Boost', of_params,
+                                       iteration_details=iteration_details, best_params=best_params,
+                                       seed=self._details.seed, threads=self._details.threads, verbose=self._verbose,
+                                       iteration_lc_only=True)

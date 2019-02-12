@@ -401,5 +401,5 @@ if __name__ == '__main__':
     cd_data = CreditDefaultData(verbose=True)
     cd_data.load_and_process()
 
-    ca_data = CreditApprovalData(verbose=True)
+    ca_data = SpamData(verbose=True)
     ca_data.load_and_process()

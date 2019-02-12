@@ -19,9 +19,11 @@ class ANNExperiment(experiments.BaseExperiment):
         hiddens = [(h,) * l for l in [1, 2, 3] for h in [d, d // 2, d * 2]]
         learning_rates = sorted([(2**x)/1000 for x in range(8)]+[0.000001])
 
-        params = {'MLP__activation': ['relu', 'logistic'], 'MLP__alpha': alphas,
-                  'MLP__learning_rate_init': learning_rates,
-                  'MLP__hidden_layer_sizes': hiddens}
+        params = {
+            'MLP__activation': ['relu', 'logistic'],
+            'MLP__alpha': alphas,
+            'MLP__learning_rate_init': learning_rates,
+            'MLP__hidden_layer_sizes': hiddens}
 
         timing_params = {'MLP__early_stopping': False}
         iteration_details = {
@@ -66,9 +68,12 @@ class ANNExperiment(experiments.BaseExperiment):
             learner.set_params(**best_params)
         learner = learners.ANNLearner(max_iter=3000, early_stopping=True, random_state=self._details.seed,
                                       verbose=self._verbose)
-        experiments.perform_experiment(self._details.ds, self._details.ds_name, self._details.ds_readable_name, learner,
-                                       'ANN_OF', 'MLP', of_params, seed=self._details.seed, timing_params=timing_params,
-                                       iteration_details=iteration_details,
-                                       best_params=best_params,
-                                       threads=self._details.threads, verbose=self._verbose,
-                                       iteration_lc_only=True)
+        experiments.perform_experiment(
+            self._details.ds, self._details.ds_name, self._details.ds_readable_name, learner, 'ANN_OF', 'MLP',
+            of_params,
+            seed=self._details.seed,
+            timing_params=timing_params,
+            iteration_details=iteration_details,
+            best_params=best_params,
+            threads=self._details.threads, verbose=self._verbose,
+            iteration_lc_only=True)

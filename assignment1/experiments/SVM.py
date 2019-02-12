@@ -40,9 +40,15 @@ class SVMExperiment(experiments.BaseExperiment):
         #                    'gamma': 0.125, 'max_iter': -1, 'tol': 0.07000001}
 
         # Linear SVM
-        params = {'SVM__max_iter': iters, 'SVM__tol': tols, 'SVM__class_weight': ['balanced'],
-                  'SVM__C': C_values}
-        complexity_param = {'name': 'SVM__C', 'display_name': 'Penalty', 'values': np.arange(0.001, 2.5, 0.1)}
+        params = {
+            'SVM__max_iter': iters,
+            'SVM__tol': tols,
+            'SVM__class_weight': ['balanced'],
+            'SVM__C': C_values}
+        complexity_param = {
+            'name': 'SVM__C',
+            'display_name': 'Penalty',
+            'values': np.arange(0.001, 2.5, 0.1)}
 
         iteration_details = {
             'x_scale': 'log',
@@ -66,18 +72,25 @@ class SVMExperiment(experiments.BaseExperiment):
         learner = learners.LinearSVMLearner(dual=True)
         if best_params_linear is not None:
             learner.set_params(**best_params_linear)
-        experiments.perform_experiment(self._details.ds, self._details.ds_name, self._details.ds_readable_name, learner,
-                                       'SVMLinear_OF', 'SVM', of_params, seed=self._details.seed,
-                                       iteration_details=iteration_details,
-                                       best_params=best_params_linear,
-                                       threads=self._details.threads, verbose=self._verbose,
-                                       iteration_lc_only=True)
+        experiments.perform_experiment(
+            self._details.ds, self._details.ds_name, self._details.ds_readable_name, learner, 'SVMLinear_OF', 'SVM',
+            of_params, seed=self._details.seed, iteration_details=iteration_details,
+            best_params=best_params_linear,
+            threads=self._details.threads, verbose=self._verbose,
+            iteration_lc_only=True)
 
         # RBF SVM
-        params = {'SVM__max_iter': iters, 'SVM__tol': tols, 'SVM__class_weight': ['balanced'],
-                  'SVM__C': C_values,
-                  'SVM__decision_function_shape': ['ovo', 'ovr'], 'SVM__gamma': gamma_fracs}
-        complexity_param = {'name': 'SVM__C', 'display_name': 'Penalty', 'values': np.arange(0.001, 2.5, 0.1)}
+        params = {
+            'SVM__max_iter': iters,
+            'SVM__tol': tols,
+            'SVM__class_weight': ['balanced'],
+            'SVM__C': C_values,
+            'SVM__decision_function_shape': ['ovo', 'ovr'],
+            'SVM__gamma': gamma_fracs}
+        complexity_param = {
+            'name': 'SVM__C',
+            'display_name': 'Penalty',
+            'values': np.arange(0.001, 2.5, 0.1)}
 
         learner = learners.SVMLearner(kernel='rbf')
         if best_params_rbf is not None:
@@ -92,9 +105,9 @@ class SVMExperiment(experiments.BaseExperiment):
         learner = learners.SVMLearner(kernel='rbf')
         if best_params_rbf is not None:
             learner.set_params(**best_params_rbf)
-        experiments.perform_experiment(self._details.ds, self._details.ds_name, self._details.ds_readable_name, learner,
-                                       'SVM_RBF_OF', 'SVM', of_params, seed=self._details.seed,
-                                       iteration_details=iteration_details,
-                                       best_params=best_params_rbf,
-                                       threads=self._details.threads, verbose=self._verbose,
-                                       iteration_lc_only=True)
+        experiments.perform_experiment(
+            self._details.ds, self._details.ds_name, self._details.ds_readable_name, learner, 'SVM_RBF_OF', 'SVM',
+            of_params, seed=self._details.seed, iteration_details=iteration_details,
+            best_params=best_params_rbf,
+            threads=self._details.threads, verbose=self._verbose,
+            iteration_lc_only=True)
