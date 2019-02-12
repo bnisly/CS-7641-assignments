@@ -15,7 +15,7 @@ date
 #for i in dt boosting knn ann svm; do
 for i in svm ann; do
     aws sns publish --region us-west-2 --phone-number $1 --message "starting $i"
-    time nice python run_experiment.py --threads -2 --$i --verbose --seed 12345
+    time nice python run_experiment.py --threads -1 --$i --verbose --seed 12345
     aws sns publish --region us-west-2 --phone-number $1 --message "$i done at $(date)"
 done
 date
