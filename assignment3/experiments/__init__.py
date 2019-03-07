@@ -49,8 +49,24 @@ pipeline_cachedir = mkdtemp()
 pipeline_memory = None
 
 # The best ANN params from assignment 1 (for just one dataset)
-BEST_NN_PARAMS = {'NN__activation': ['relu'], 'NN__alpha': [1.0],
-                  'NN__hidden_layer_sizes': [(36, 36)], 'NN__learning_rate_init': [0.016]}
+#BEST_NN_PARAMS = {'NN__activation': ['relu'], 'NN__alpha': [1.0],
+#                  'NN__hidden_layer_sizes': [(36, 36)], 'NN__learning_rate_init': [0.016]}
+
+# Table 6 Tuned hyperparameters for ANN over Credit Default
+# activation | relu
+# alpha | 0.0001
+# hidden_layer_sizes | (11, 11, 11)
+# learning_rate_init | 0.128
+BEST_NN_PARAMS = {'NN__activation': ['relu'], 'NN__alpha': [0.0001],
+                  'NN__hidden_layer_sizes': [(11, 11, 11)], 'NN__learning_rate_init': [0.128]}
+
+# Table 8 Tuned hyperparameters for ANN over Spam
+# activation | relu
+# alpha | 1.0
+# hidden_layer_sizes | (57, 57, 57)
+# learning_rate_init | 0.004
+#BEST_NN_PARAMS = {'NN__activation': ['relu'], 'NN__alpha': [1.0],
+#                  'NN__hidden_layer_sizes': [(57, 57, 57)], 'NN__learning_rate_init': [0.004]}
 
 
 def run_subexperiment(main_experiment, out, ds=None):

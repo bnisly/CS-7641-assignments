@@ -41,6 +41,11 @@ class BaseExperiment(ABC):
 
         self._scorer, _ = get_scorer(self._details.ds)
 
+        self._nn_arch = [(57, 57, 57)]
+        self._nn_reg = [10 ** -x for x in range(1, 5)]
+        self._clusters = [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40]
+        self._dims = [2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
+
     def get_details(self):
         return self._details
 
