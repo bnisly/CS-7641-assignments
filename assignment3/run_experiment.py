@@ -101,7 +101,6 @@ if __name__ == '__main__':
             'best_nn_params': {'NN__activation': ['relu'], 'NN__alpha': [1.0],
                                'NN__hidden_layer_sizes': [(57, 57, 57)], 'NN__learning_rate_init': [0.004]}
         }
-    }
     if args.dataset1:
         datasets.append(dataset1_details)
     elif args.dataset2:
