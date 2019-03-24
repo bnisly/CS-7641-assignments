@@ -58,6 +58,11 @@ to_process = {
         'path': 'RP',
         'nn_curve': False,
         'multiple_trials': False
+    },
+    'RP,dim=11': {
+        'path': 'RP,dim=11',
+        'nn_curve': False,
+        'multiple_trials': False
     }
 }
 
@@ -215,7 +220,11 @@ def plot_scree(title, df, problem_name, multiple_runs=False, xlabel='Number of C
     else:
         ax.axvline(x=knee_point, linestyle="--", label="Knee: {}".format(knee_point))
 
-    ax.set_xticks(df.index.values, minor=False)
+    #ax.set_xticks(df.index.values, minor=False)
+    # Set x axis with ticks at multples of 5
+    base = 5
+    max_x = int(base * round((df.index.values[-1] + 5) / base))
+    ax.set_xticks(range(0, max_x, 5), minor=False)
 
     plt.legend(loc="best")
 
@@ -322,12 +331,13 @@ def plot_combined(title, df, data_columns, tsne_data=None, extra_data=None, extr
         ax2.set_xticks([])
         ax2.set_yticks([])
 
+    # Color the extra_data in red
     if extra_data is not None and extra_data_name is not None:
         ex_ax = ax1.twinx()
         ex_ax.plot(extra_data.index.values, extra_data.iloc[:, 0], linewidth=1,
-                   label=extra_data_name)
-        ex_ax.set_ylabel(extra_data_name)
-        ex_ax.tick_params('y')
+                   label=extra_data_name, color='tab:red')
+        ex_ax.set_ylabel(extra_data_name, color='tab:red')
+        ex_ax.tick_params('y', labelcolor='tab:red')
 
     ax1.legend(loc="best")
     ax1.grid()
@@ -544,7 +554,7 @@ def read_and_plot_acc(problem, file, output_dir):
 
     title = '{} - {}: Accuracy vs Number of Clusters'.format(ds_readable_name, problem['name'])
     df = pd.read_csv(file).set_index('k')
-    p = plot_sse(title, df)
+    p = plot_acc(title, df)
     p = watermark(p)
     p.savefig(
         '{}/{}/{}_acc.png'.format(output_dir, problem['name'], ds_name),

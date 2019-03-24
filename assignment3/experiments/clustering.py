@@ -160,6 +160,7 @@ class ClusteringExperiment(experiments.BaseExperiment):
         acc.to_csv(self._out.format('{}_acc.csv'.format(self._details.ds_name)))
         adj_mi.to_csv(self._out.format('{}_adj_mi.csv'.format(self._details.ds_name)))
 
+        # Kmeans -> NN
         # %% NN fit data (2,3)
         grid = {'km__n_clusters': self._clusters, 'NN__alpha': self._nn_reg, 'NN__hidden_layer_sizes': self._nn_arch}
         mlp = MLPClassifier(activation='relu', max_iter=2000, early_stopping=True, random_state=self._details.seed)
@@ -171,6 +172,7 @@ class ClusteringExperiment(experiments.BaseExperiment):
         tmp = pd.DataFrame(gs.cv_results_)
         tmp.to_csv(self._out.format('{}_cluster_kmeans.csv'.format(self._details.ds_name)))
 
+        # GMM (EM) -> NN
         grid = {'gmm__n_components': self._clusters, 'NN__alpha': self._nn_reg, 'NN__hidden_layer_sizes': self._nn_arch}
         mlp = MLPClassifier(activation='relu', max_iter=2000, early_stopping=True, random_state=self._details.seed)
         gmm = CustomGMM(random_state=self._details.seed)
