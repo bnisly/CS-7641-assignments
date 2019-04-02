@@ -51,20 +51,30 @@ if __name__ == '__main__':
 
     envs = [
         {
-            # This is not really a rewarding frozen lake env, but the custom class has extra functionality
-            'env': environments.get_rewarding_no_reward_frozen_lake_environment(),
+            'env': environments.get_frozen_lake_environment(),
             'name': 'frozen_lake',
             'readable_name': 'Frozen Lake (8x8)',
         },
         {
-            'env': environments.get_large_rewarding_no_reward_frozen_lake_environment(),
-            'name': 'large_frozen_lake',
-            'readable_name': 'Frozen Lake (20x20)',
-        },
-        {
-            'env': environments.get_windy_cliff_walking_environment(),
-            'name': 'cliff_walking',
-            'readable_name': 'Cliff Walking (4x12)',
+            'env': environments.get_rewarding_frozen_lake_environment(),
+            'name': 'frozen_lake',
+            'readable_name': 'Frozen Lake (4x4)',
+        #},
+        #{
+        #    # This is not really a rewarding frozen lake env, but the custom class has extra functionality
+        #    'env': environments.get_rewarding_no_reward_frozen_lake_environment(),
+        #    'name': 'frozen_lake',
+        #    'readable_name': 'Frozen Lake (8x8)',
+        #},
+        #{
+        #    'env': environments.get_large_rewarding_no_reward_frozen_lake_environment(),
+        #    'name': 'large_frozen_lake',
+        #    'readable_name': 'Frozen Lake (20x20)',
+        #},
+        #{
+        #    'env': environments.get_windy_cliff_walking_environment(),
+        #    'name': 'cliff_walking',
+        #    'readable_name': 'Cliff Walking (4x12)',
         }
     ]
 

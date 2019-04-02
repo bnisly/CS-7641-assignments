@@ -41,7 +41,8 @@ def get_rewarding_frozen_lake_environment():
 
 
 def get_frozen_lake_environment():
-    return gym.make('FrozenLake-v0')
+    #return gym.make('FrozenLake-v0')
+    return gym.make('RewardingFrozenLake-v0')
 
 
 def get_rewarding_no_reward_frozen_lake_environment():
