@@ -6,8 +6,8 @@ from .base import BaseSolver, one_step_lookahead, EpisodeStats
 
 # Adapted from https://github.com/dennybritz/reinforcement-learning/blob/master/TD/Q-Learning%20Solution.ipynb
 class QLearningSolver(BaseSolver):
-    def __init__(self, env, max_episodes, max_steps_per_episode=500, discount_factor=1.0, alpha=0.5, epsilon=0.1,
-                 epsilon_decay=0.001, q_init=0, theta=0.0001, min_consecutive_sub_theta_episodes=10, verbose=False):
+    def __init__(self, env, max_episodes, max_steps_per_episode=15000, discount_factor=1.0, alpha=0.5, epsilon=0.1,
+                 epsilon_decay=0.001, q_init=0, theta=0.001, min_consecutive_sub_theta_episodes=10, verbose=False):
         self._env = env.unwrapped
 
         self._max_episodes = max_episodes
@@ -16,8 +16,10 @@ class QLearningSolver(BaseSolver):
         self._max_steps_per_episode = max_steps_per_episode
         self._epsilon = epsilon
         self._initial_epsilon = epsilon
+        self._min_epsilon = 0.1
         self._epsilon_decay = epsilon_decay
         self._alpha = alpha
+        self._alphas = np.linspace(alpha, 0.002, self._max_episodes)
         self._discount_factor = discount_factor
         self._q_init = q_init
         self._steps = 0
@@ -43,6 +45,8 @@ class QLearningSolver(BaseSolver):
         # One step in the environment
         total_reward = 0.0
         episode_steps = 0
+        alpha = self._alphas[self._steps]
+
         for t in range(self._max_steps_per_episode+1):
             # Take a step
             action_probs = self._policy_function(state)
@@ -60,19 +64,23 @@ class QLearningSolver(BaseSolver):
             td_target = reward + self._discount_factor * self._Q[next_state, best_next_action]
             td_delta = td_target - self._Q[state, action]
             self._stats.episode_deltas[self._steps] = td_delta
-            self._Q[state, action] += self._alpha * td_delta
-
-            # Decay epsilon
-            self._epsilon -= self._epsilon * self._epsilon_decay
+            self._Q[state, action] += alpha * td_delta
 
             total_reward += reward
-            self._last_delta = max(self._last_delta, td_delta)
+            self._last_delta = abs(alpha * td_delta)
 
             episode_steps += 1
             if done:
                 break
 
             state = next_state
+
+        # Exponentially decay epsilon
+        self._epsilon = self._min_epsilon + (self._initial_epsilon - self._min_epsilon) * \
+                        np.exp(-self._epsilon_decay*self._steps)
+
+        if self._verbose:
+            self.log("Step {}: alpha={}, epsilon={}".format(self._steps, alpha, self._epsilon))
 
         if self._last_delta < self._theta:
             self._consecutive_sub_theta_episodes += 1

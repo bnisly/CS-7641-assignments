@@ -27,6 +27,23 @@ MAPS = {
         "FHFFHFHF",
         "FFFHFFFG"
     ],
+    "15x15": [
+        "SFFFFFHFFFFFFFF",
+        "FFFFFFFFFFFFHFF",
+        "FFHFFFFFHFFFFFF",
+        "FFFFHFFFFFFFHFF",
+        "FFFFFFFFFFFFHFF",
+        "FFFFHFFHFFFFHFF",
+        "FFFFHFFFFFFFHFF",
+        "FFFFFFFFHHHHHFF",
+        "HHHFHFFFFFFFHFF",
+        "FFFFHFFHHFFFHFF",
+        "FFFFFFFFFFFFHFF",
+        "FFFFHFFFHFFFHFF",
+        "FFFFFFFFFFFFFFF",
+        "FHFHFHFFFFFFFFF",
+        "FFHFFFFFFFHHHFG"
+    ],
     "20x20": [
         "SFFFFFFHHHFFFFFFFFFF",
         "FFFFFFFFFFFFFFFFHHFF",
@@ -84,7 +101,7 @@ class RewardingFrozenLakeEnv(discrete.DiscreteEnv):
 
     metadata = {'render.modes': ['human', 'ansi']}
 
-    def __init__(self, desc=None, map_name="4x4", rewarding=True, step_reward=-0.1, hole_reward=-1, is_slippery=True):
+    def __init__(self, desc=None, map_name="4x4", rewarding=True, step_reward=-1, hole_reward=-100, is_slippery=True):
         if desc is None and map_name is None:
             raise ValueError('Must provide either desc or map_name')
         elif desc is None:
@@ -126,7 +143,11 @@ class RewardingFrozenLakeEnv(discrete.DiscreteEnv):
                     li = P[s][a]
                     letter = desc[row, col]
                     if letter in b'GH':
-                        li.append((1.0, s, 0, True))
+                        if self.rewarding:
+                            rew = float(100 if letter == b'G' else -100)
+                        else:
+                            rew = float(100 if letter == b'G' else 0)
+                        li.append((1.0, s, rew, True))
                     else:
                         if is_slippery:
                             for b in [(a - 1) % 4, a, (a + 1) % 4]:
@@ -134,19 +155,19 @@ class RewardingFrozenLakeEnv(discrete.DiscreteEnv):
                                 newstate = to_s(newrow, newcol)
                                 newletter = desc[newrow, newcol]
                                 done = bytes(newletter) in b'GH'
-                                rew = float(newletter == b'G')
+                                rew = float(100 if newletter == b'G' else 0)
                                 if self.rewarding:
                                     if newletter == b'F':
                                         rew = self.step_reward
                                     elif newletter == b'H':
                                         rew = self.hole_reward
-                                li.append((1.0 / 3.0, newstate, rew, done))
+                                li.append((0.8 if b == a else 0.1, newstate, rew, done))
                         else:
                             newrow, newcol = inc(row, col, a)
                             newstate = to_s(newrow, newcol)
                             newletter = desc[newrow, newcol]
                             done = bytes(newletter) in b'GH'
-                            rew = float(newletter == b'G')
+                            rew = float(100 if newletter == b'G' else 0)
                             if self.rewarding:
                                 if newletter == b'F':
                                     rew = self.step_reward

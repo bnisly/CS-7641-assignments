@@ -70,9 +70,10 @@ def plot_episode_stats(title_base, stats, smoothing_window=50):
     plt.subplot(121)
     plt.grid()
     plt.tight_layout()
-    plt.plot(stats['length'])
+    plt.plot(stats['length'], linewidth=.5)
     plt.xlabel("Episode")
-    plt.ylabel("Episode Length")
+    #plt.ylabel("Episode Length")
+    plt.ylabel("Steps per Episode")
     plt.title("Episode Length over Time")
     plt.subplot(122)
     plt.hist(stats['length'], zorder=3)
@@ -80,7 +81,13 @@ def plot_episode_stats(title_base, stats, smoothing_window=50):
     plt.xlabel("Episode Length")
     plt.ylabel("Count")
     plt.tight_layout()
-    plt.title(title_base.format("Episode Length (Histogram)"))
+    plt.title("Episode Length (Histogram)")
+
+    st = plt.suptitle(title_base)
+    # shift subplots down:
+    st.set_y(0.95)
+    fig1.subplots_adjust(top=0.85)
+
     fig1 = watermark(fig1)
 
     # Plot the episode reward over time
@@ -91,7 +98,7 @@ def plot_episode_stats(title_base, stats, smoothing_window=50):
     plt.subplot(121)
     plt.grid()
     plt.tight_layout()
-    plt.plot(rewards_smoothed)
+    plt.plot(rewards_smoothed, linewidth=.5)
     plt.xlabel("Episode")
     plt.ylabel("Episode Reward (Smoothed)")
     plt.title("Episode Reward over Time ({})".format(smoothing_window))
@@ -101,7 +108,13 @@ def plot_episode_stats(title_base, stats, smoothing_window=50):
     plt.grid(zorder=0)
     plt.xlabel("Episode Reward")
     plt.ylabel("Count")
-    plt.title(title_base.format("Episode Reward (Histogram)"))
+    plt.title("Episode Reward (Histogram)")
+
+    st = plt.suptitle(title_base)
+    # shift subplots down:
+    st.set_y(0.95)
+    fig2.subplots_adjust(top=0.85)
+
     fig2 = watermark(fig2)
 
     # Plot time steps and episode number
@@ -110,7 +123,7 @@ def plot_episode_stats(title_base, stats, smoothing_window=50):
     plt.grid()
     plt.tight_layout()
     time_steps = np.cumsum(stats['time'])
-    plt.plot(time_steps, np.arange(len(stats['time'])))
+    plt.plot(time_steps, np.arange(len(stats['time'])), linewidth=1)
     plt.xlabel("Time Steps")
     plt.ylabel("Episode")
     plt.title("Episode per time step")
@@ -120,7 +133,13 @@ def plot_episode_stats(title_base, stats, smoothing_window=50):
     plt.grid(zorder=0)
     plt.xlabel("Time Step")
     plt.ylabel("Count")
-    plt.title(title_base.format("Episode Time (Histogram)"))
+    plt.title("Episode Time (Histogram)")
+
+    st = plt.suptitle(title_base)
+    # shift subplots down:
+    st.set_y(0.95)
+    fig3.subplots_adjust(top=0.85)
+
     fig3 = watermark(fig3)
 
     return fig1, fig2, fig3
@@ -132,6 +151,7 @@ def plot_policy_map(title, policy, map_desc, color_map, direction_map):
     font_size = 'x-large'
     if policy.shape[1] > 16:
         font_size = 'small'
+
     plt.title(title)
     for i in range(policy.shape[0]):
         for j in range(policy.shape[1]):
@@ -149,6 +169,199 @@ def plot_policy_map(title, policy, map_desc, color_map, direction_map):
     plt.axis('off')
     plt.xlim((0, policy.shape[1]))
     plt.ylim((0, policy.shape[0]))
+    plt.tight_layout()
+
+    return watermark(plt)
+
+def plot_policy_map1(title, policy, map_desc, color_map, direction_map):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, xlim=(0, policy.shape[1]), ylim=(0, policy.shape[0]))
+    font_size = 'x-large'
+    if policy.shape[1] > 16:
+        font_size = 'small'
+
+    plt.title(title)
+    for i in range(policy.shape[0]):
+        for j in range(policy.shape[1]):
+            y = policy.shape[0] - i - 1
+            x = j
+            p = plt.Rectangle([x, y], 1, 1)
+            p.set_facecolor(color_map[map_desc[i, j]])
+            ax.add_patch(p)
+
+            if map_desc[i, j] == b'F' or map_desc[i, j] == b'R':
+                text = ax.text(x+0.5, y+0.5, direction_map[policy[i, j]], weight='bold', size=font_size,
+                               horizontalalignment='center', verticalalignment='center', color='w')
+                text.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                       path_effects.Normal()])
+            elif map_desc[i, j] == b'S':
+                text2 = ax.text(x+0.5, y+0.5, 'Start', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'G':
+                text2 = ax.text(x+0.5, y+0.5, 'Goal', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+
+    plt.axis('off')
+    plt.xlim((0, policy.shape[1]))
+    plt.ylim((0, policy.shape[0]))
+    plt.tight_layout()
+
+    return watermark(plt)
+
+def plot_policy_map_combined(title, policy, v, map_desc, color_map, direction_map):
+    font_size = 'x-large'
+    if policy.shape[1] > 10:
+        font_size = 'small'
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(v, cmap=plt.cm.Blues, interpolation='nearest')
+    if policy.shape[1] == 12:
+        fig.colorbar(im, ax=ax, pad=.05, fraction=.05, orientation='horizontal')
+    else:
+        fig.colorbar(im, ax=ax)
+    plt.title(title)
+
+    for i in range(policy.shape[0]):
+        for j in range(policy.shape[1]):
+            #y = policy.shape[0] - i - 1
+            y = i
+            x = j
+            if map_desc[i, j] != b'F' and map_desc[i, j] != b'R':
+                p = plt.Rectangle([x-.5, y-.5], 1, 1)
+                p.set_facecolor(color_map[map_desc[i, j]])
+                ax.add_patch(p)
+
+            if map_desc[i, j] == b'F' or map_desc[i, j] == b'R':
+                text2 = ax.text(x, y, direction_map[policy[i, j]], size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'S':
+                text2 = ax.text(x, y, 'Start', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'G':
+                text2 = ax.text(x, y, 'Goal', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+
+    plt.axis('off')
+    #plt.xlim((0, policy.shape[1]))
+    #plt.ylim((0, policy.shape[0]))
+    plt.tight_layout()
+    return plt
+
+def plot_value_map2(title, v, map_desc, color_map):
+    font_size = 'x-large'
+    if v.shape[1] > 10:
+        font_size = 'small'
+
+    fig, ax = plt.subplots()
+    im = ax.imshow(v, cmap=plt.cm.Blues, interpolation='nearest')
+    if v.shape[1] == 12:
+        fig.colorbar(im, ax=ax, pad=.05, fraction=.05, orientation='horizontal')
+    else:
+        fig.colorbar(im, ax=ax)
+    plt.title(title)
+
+    for i in range(v.shape[0]):
+        for j in range(v.shape[1]):
+            #y = v.shape[0] - i - 1
+            y = i
+            x = j
+            if map_desc[i, j] != b'F' and map_desc[i, j] != b'R':
+                p = plt.Rectangle([x-.5, y-.5], 1, 1)
+                p.set_facecolor(color_map[map_desc[i, j]])
+                ax.add_patch(p)
+
+            #value = np.round(v[i, j], 2)
+            #if v.shape[1] != 12:
+            #    value = int(v[i, j])
+            #else:
+            #    value = np.round(v[i, j], 1)
+            value = int(np.rint(v[i, j]))
+
+            if map_desc[i, j] == b'F' or map_desc[i, j] == b'R':
+                text2 = ax.text(x, y, value, size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'S':
+                text2 = ax.text(x, y, 'Start', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'G':
+                text2 = ax.text(x, y, 'Goal', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=2, foreground='black'),
+                                        path_effects.Normal()])
+
+    plt.axis('off')
+    #plt.xlim((0, v.shape[1]))
+    #plt.ylim((0, v.shape[0]))
+    plt.tight_layout()
+    return plt
+
+def plot_value_map1(title, v, map_desc, color_map):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, xlim=(0, v.shape[1]), ylim=(0, v.shape[0]))
+    font_size = 'x-large'
+    if v.shape[1] > 16:
+        font_size = 'small'
+
+    v_min = np.min(v)
+    v_max = np.max(v)
+    bins = np.linspace(v_min, v_max, 100)
+    v_red = np.digitize(v, bins)/100.0
+    for i in range(v.shape[0]):
+        for j in range(v.shape[1]):
+            value = np.round(v[i, j], 2)
+            if len(str(value)) > 4:
+                font_size = 'small'
+
+    plt.title(title)
+
+    for i in range(v.shape[0]):
+        for j in range(v.shape[1]):
+            y = v.shape[0] - i - 1
+            x = j
+            p = plt.Rectangle([x, y], 1, 1)
+            red = v_red[i, j]
+            if map_desc[i, j] == b'F' or map_desc[i, j] == b'R':
+                p.set_facecolor((1.0-(red*.9), 1.0-(red*.6), 1.0-(red*.1)))
+            else:
+                p.set_facecolor(color_map[map_desc[i, j]])
+            ax.add_patch(p)
+
+            #value = np.round(v[i, j], 1)
+            value = int(np.rint(v[i, j]))
+
+            if map_desc[i, j] == b'F' or map_desc[i, j] == b'R':
+                text2 = ax.text(x+0.5, y+0.5, value, size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color=(red, red, 0))
+                text2.set_path_effects([path_effects.Stroke(linewidth=1, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'S':
+                text2 = ax.text(x+0.5, y+0.5, 'Start', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=1, foreground='black'),
+                                        path_effects.Normal()])
+            elif map_desc[i, j] == b'G':
+                text2 = ax.text(x+0.5, y+0.5, 'Goal', size=font_size,
+                                horizontalalignment='center', verticalalignment='center', color='w')
+                text2.set_path_effects([path_effects.Stroke(linewidth=1, foreground='black'),
+                                        path_effects.Normal()])
+
+    plt.axis('off')
+    plt.xlim((0, v.shape[1]))
+    plt.ylim((0, v.shape[0]))
     plt.tight_layout()
 
     return watermark(plt)
@@ -180,7 +393,8 @@ def plot_value_map(title, v, map_desc, color_map):
             p.set_facecolor(color_map[map_desc[i, j]])
             ax.add_patch(p)
 
-            value = np.round(v[i, j], 2)
+            #value = np.round(v[i, j], 2)
+            value = int(np.rint(v[i, j]))
 
             red = v_red[i, j]
             text2 = ax.text(x+0.5, y+0.5, value, size=font_size,
@@ -205,7 +419,7 @@ def plot_time_vs_steps(title, df, xlabel="Steps", ylabel="Time (s)"):
     plt.grid()
     plt.tight_layout()
 
-    plt.plot(df.index.values, df['time'], '-', linewidth=1)
+    plt.plot(df.index.values, df['time'], '-', linewidth=.5)
     plt.legend(loc="best")
 
     return watermark(plt)
@@ -220,10 +434,10 @@ def plot_reward_and_delta_vs_steps(title, df, xlabel="Steps", ylabel="Reward"):
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
 
-    lns1 = ax.plot(df.index.values, df['reward'], linewidth=1, label=ylabel)
+    lns1 = ax.plot(df.index.values, df['reward'], 'r-', linewidth=.5, label=ylabel)
 
     ex_ax = ax.twinx()
-    lns2 = ex_ax.plot(df.index.values, df['delta'], linewidth=1, label='Delta')
+    lns2 = ex_ax.plot(df.index.values, df['delta'], 'b-',  linewidth=.5, label='Delta')
     ex_ax.set_ylabel('Delta')
     ex_ax.tick_params('y')
 
@@ -235,6 +449,32 @@ def plot_reward_and_delta_vs_steps(title, df, xlabel="Steps", ylabel="Reward"):
     lns = lns1 + lns2
     labs = [l.get_label() for l in lns]
     ax.legend(lns, labs, loc=0)
+
+    return watermark(plt)
+
+
+def plot_reward_and_delta_vs_steps_scatter(title, df, xlabel="Steps", ylabel="Reward"):
+    plt.close()
+    plt.figure()
+
+    f, (ax) = plt.subplots(1, 1)
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
+    lns1 = ax.scatter(df.index.values, df['reward'], c='r',  marker='1', linewidth=.5, label=ylabel)
+
+    ex_ax = ax.twinx()
+    lns2 = ex_ax.scatter(df.index.values, df['delta'], c='b',  marker='+', linewidth=.5, label='Delta')
+    ex_ax.set_ylabel('Delta')
+    ex_ax.tick_params('y')
+
+    ax.grid()
+    ax.axis('tight')
+
+    f.tight_layout()
+
+    plt.legend((lns1, lns2), (ylabel, 'Delta'), scatterpoints=1, loc='best')
 
     return watermark(plt)
 
@@ -443,9 +683,16 @@ def plot_data(data_files, envs, base_dir):
             p.savefig(file_name, format='png', dpi=150)
             p.close()
 
+            file_name = '{}/{}/{}_reward_delta_scatter.png'.format(base_dir, problem_name, mdp)
+            p = plot_reward_and_delta_vs_steps_scatter(title, df, ylabel=reward_term, xlabel=step_term)
+            p = watermark(p)
+            p.savefig(file_name, format='png', dpi=150)
+            p.close()
+
             if problem_name == 'Q' and 'episode_file' in mdp_files:
-                title = '{}: {} - {}'.format(env['readable_name'], problem_name_to_descriptive_name(problem_name),
-                                             '{}')
+                #title = '{}: {} - {}'.format(env['readable_name'], problem_name_to_descriptive_name(problem_name),
+                #                             '{}')
+                title = '{}: {}'.format(env['readable_name'], problem_name_to_descriptive_name(problem_name))
                 episode_df = pd.read_csv(mdp_files['episode_file'])
                 q_length, q_reward, q_time = plot_episode_stats(title, episode_df)
                 file_base = '{}/{}/{}_{}.png'.format(base_dir, problem_name, mdp, '{}')

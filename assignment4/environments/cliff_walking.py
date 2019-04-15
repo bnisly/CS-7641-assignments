@@ -134,7 +134,8 @@ class WindyCliffWalkingEnv(discrete.DiscreteEnv):
     def colors(self):
         return {
             b'S': 'green',
-            b'R': 'lightslategray',
+            #b'R': 'lightslategray',
+            b'R': 'skyblue',
             b'C': 'black',
             b'G': 'gold',
         }

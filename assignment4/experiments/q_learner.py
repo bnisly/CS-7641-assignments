@@ -17,8 +17,7 @@ if not os.path.exists(OUTPUT_DIRECTORY + '/images/Q'):
 
 class QLearnerExperiment(BaseExperiment):
     def __init__(self, details, verbose=False):
-        #self.max_episodes = 2000
-        self.max_episodes = 25000
+        self.max_episodes = 30000
 
         super(QLearnerExperiment, self).__init__(details, verbose)
 
@@ -34,11 +33,11 @@ class QLearnerExperiment(BaseExperiment):
         with open(grid_file_name, 'w') as f:
             f.write("params,time,steps,reward_mean,reward_median,reward_min,reward_max,reward_std\n")
 
-        alphas = [0.1, 0.5, 0.9]
-        q_inits = ['random', 0]
-        epsilons = [0.1, 0.3, 0.5]
-        epsilon_decays = [0.0001]
-        discount_factors = np.round(np.linspace(0, 0.9, num=10), 2)
+        alphas = [0.75]
+        q_inits = ['random']
+        epsilons = [1.0]
+        epsilon_decays = [0.001]
+        discount_factors = [1.0] #np.round(np.linspace(0, 0.9, num=10), 2)
         dims = len(discount_factors) * len(alphas) * len(q_inits) * len(epsilons) * len(epsilon_decays)
         self.log("Searching Q in {} dimensions".format(dims))
 
